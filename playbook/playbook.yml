@@ -1,14 +1,34 @@
 ---
 - hosts: all
   tasks:
-    - name: MàJ cache APT
+    - name: Installer les paquets de base
+      apt: name={{ item }} state=present
+      with_items:
+        - iptables
+    
+    - name: Installer la clé du repo Docker
+      apt_key: url=https://get.docker.io/gpg state=present
+      sudo: yes
+      
+    - name: Ajouter les backports Jessie
+      apt_repository: repo='deb http://http.debian.net/debian jessie-backports main' state=present
+      sudo: yes
+    
+    - name: Update apt-cache
       apt: update_cache=yes
       sudo: yes
     
     - name: Installer docker
       apt: name=docker.io state=present
       sudo: yes
-    
+      notify:
+        - restart docker
+        
+    # TODO Mettre une condition pour exécuter cette étape uniquement dans Vagrant
+    - name: "Ajouter l'user vagrant dans Docker"
+      user: name=vagrant groups=docker append=yes
+      sudo: yes
+      
     - name: Installer collectd
       apt: name=collectd state=present
       sudo: yes
@@ -22,22 +42,30 @@
     - name: Installer le script init.d pour Consul
       copy: src=files/consul/init.sh dest=/etc/init.d/consul mode=0755
       sudo: yes
+      notify:
+        - restart consul
       
     - name: Créer le répertoire de config pour Consul
       file: name=/etc/consul state=directory
       sudo: yes
   
     - name: Installer la config de Consul
-      copy: src=files/consul/base_config.json dest=/etc/consul/000_base_config.json
+      template: src=files/consul/base_config.json.j2 dest=/etc/consul/000_base_config.json
       sudo: yes
+      notify:
+        - restart consul
     
     - name: Créer le répertoire runtime pour Consul
       file: name=/var/run/consul state=directory
       sudo: yes
+      notify:
+        - restart consul
 
     - name: Configurer les Recursors pour Consul
       configure_consul_recursors: state=present
       sudo: yes
+      notify:
+        - restart consul
     
     - name: Ajouter le script de contrôle de Docker
       copy: src=files/consul/check_docker.sh dest=/etc/consul/ mode=0700
@@ -46,7 +74,26 @@
     - name: Ajouter la config du service Consul pour Docker
       copy: src=files/consul/service_docker.json dest=/etc/consul/
       sudo: yes
+      notify:
+        - restart consul
+      
+    # Configurer Docker pour utiliser le DNS de Consul
+      
+    - name: Ajouter la config du service Consul pour Docker
+      template: src=files/docker/daemon.conf.j2 dest=/etc/default/docker
+      sudo: yes
+      notify:
+        - restart docker
 
-    - name: Démarrer Consul
-      service: name=consul state=restarted enabled=yes
+    - name: Activer le routage de traffic IPv4 
+      sysctl: name="net.ipv4.ip_forward" value=1 sysctl_set=yes state=present reload=yes
+      sudo: yes
+
+  handlers:
+    - name: restart docker
+      service: name=docker state=restarted
+      sudo: yes
+    
+    - name: restart consul
+      service: name=consul state=restarted
       sudo: yes
