@@ -2,6 +2,7 @@
 # coding: utf8
 
 import os
+import os.path
 import urllib2
 import shutil
 import subprocess
@@ -12,6 +13,7 @@ from contextlib import closing
 
 CONSUL_VERSION = '0.5.2'
 CONSUL_DOWNLOAD_URL = 'https://dl.bintray.com/mitchellh/consul/{}_linux_amd64.zip'.format(CONSUL_VERSION)
+CONSUL_UI_DOWNLOAD_URL = 'https://dl.bintray.com/mitchellh/consul/{}_web_ui.zip'.format(CONSUL_VERSION)
 
 
 def is_consul_installed():
@@ -37,6 +39,25 @@ def install_consul():
         os.chmod('/usr/local/bin/consul', 0755)
 
 
+def install_consul_ui():
+    with tempfile.NamedTemporaryFile() as temp_f:
+        with closing(urllib2.urlopen(CONSUL_UI_DOWNLOAD_URL)) as content_f:
+            temp_f.write(content_f.read())
+        
+        temp_f.flush()
+        temp_f.seek(0)
+        
+        target_dir = '/usr/share/consul/ui'
+        
+        if not os.path.isdir(target_dir):
+            os.makedirs(target_dir)
+        
+        with zipfile.ZipFile(temp_f, 'r') as archive:
+            archive.extractall(target_dir)
+        
+        os.chmod('/usr/local/bin/consul', 0755)
+
+
 def main():
     module = AnsibleModule(
         argument_spec = dict(
@@ -46,6 +67,7 @@ def main():
     
     if not is_consul_installed():
         install_consul()
+        install_consul_ui()
         module.exit_json(changed=True)
         return
     

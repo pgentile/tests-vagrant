@@ -6,8 +6,3 @@
     - collectd
     - consul
     - docker
-    
-  tasks:
-    - name: Activer le routage de traffic IPv4 
-      sysctl: name="net.ipv4.ip_forward" value=1 sysctl_set=yes state=present reload=yes
-      sudo: yes
