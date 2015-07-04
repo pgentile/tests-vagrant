@@ -24,10 +24,10 @@
       notify:
         - restart docker
         
-    # TODO Mettre une condition pour exécuter cette étape uniquement dans Vagrant
     - name: "Ajouter l'user vagrant dans Docker"
-      user: name=vagrant groups=docker append=yes
+      user: name={{ vagrant_user }} groups=docker append=yes
       sudo: yes
+      when: vagrant_user is defined
       
     - name: Installer collectd
       apt: name=collectd state=present

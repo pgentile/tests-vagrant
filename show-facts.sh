@@ -9,4 +9,4 @@ exec ansible \
     --connection=ssh \
     --limit='default' \
     --inventory-file=$(pwd)/.vagrant/provisioners/ansible/inventory \
-    all -m setup
+    all -m setup -a "$*"

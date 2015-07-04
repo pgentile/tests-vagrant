@@ -8,9 +8,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   ### config.vm.network "private_network", type: "dhcp"
   
   config.vm.box = "debian/jessie64"
-  
+  config.vm.hostname = "miniprod"
+    
   config.vm.provision "ansible" do |ansible|
       ansible.playbook = "playbook/playbook.yml"
+      ansible.verbose = "v"
+      
+      ansible.extra_vars = {
+        vagrant_user: "vagrant"
+      }
   end
   
 end
