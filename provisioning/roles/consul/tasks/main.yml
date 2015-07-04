@@ -1,0 +1,37 @@
+---
+  
+- name: Installer Consul
+  install_consul: state=present
+  sudo: yes
+
+- name: Installer le script init.d pour Consul
+  copy: src=init.sh dest=/etc/init.d/consul mode=0755
+  sudo: yes
+  notify:
+    - restart consul
+  
+- name: Créer le répertoire de config pour Consul
+  file: name=/etc/consul state=directory
+  sudo: yes
+
+- name: Installer la config de Consul
+  template: src=base_config.json.j2 dest=/etc/consul/000_base_config.json
+  sudo: yes
+  notify:
+    - restart consul
+
+- name: Créer le répertoire runtime pour Consul
+  file: name=/var/run/consul state=directory
+  sudo: yes
+  notify:
+    - restart consul
+
+- name: Configurer les Recursors pour Consul
+  configure_consul_recursors: state=present
+  sudo: yes
+  notify:
+    - restart consul
+
+- name: Installer la config pour le client Consul
+  template: src=profile.sh.j2 dest=/etc/profile.d/consul-client.sh
+  sudo: yes

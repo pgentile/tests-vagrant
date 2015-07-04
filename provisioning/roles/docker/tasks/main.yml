@@ -1,0 +1,30 @@
+---
+  
+- name: Installer docker
+  apt: name=docker.io state=present
+  sudo: yes
+  notify:
+    - restart docker
+    
+- name: "Ajouter l'user vagrant dans Docker"
+  user: name={{ vagrant_user }} groups=docker append=yes
+  sudo: yes
+  when: vagrant_user is defined
+  
+- name: Ajouter le script de contrôle de Docker
+  copy: src=consul/check_docker.sh dest=/etc/consul/ mode=0700
+  sudo: yes
+  
+- name: Ajouter la config du service Consul pour Docker
+  copy: src=consul/service_docker.json dest=/etc/consul/
+  sudo: yes
+  notify:
+    - restart consul
+
+# Configurer Docker pour utiliser le DNS de Consul
+  
+- name: Ajouter la config du service Consul pour Docker
+  template: src=daemon.conf.j2 dest=/etc/default/docker
+  sudo: yes
+  notify:
+    - restart docker
