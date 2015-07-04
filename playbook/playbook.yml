@@ -76,6 +76,10 @@
       sudo: yes
       notify:
         - restart consul
+  
+    - name: Installer la config pour le client Consul
+      template: src=files/consul/profile.sh.j2 dest=/etc/profile.d/consul-client.sh
+      sudo: yes
       
     # Configurer Docker pour utiliser le DNS de Consul
       
