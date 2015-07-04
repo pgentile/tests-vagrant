@@ -1,10 +1,8 @@
 {
   "enable_syslog": true,
   "data_dir": "/var/run/consul",
+  "client_addr": "{{ ansible_default_ipv4.address }}",
   "ports": {
     "dns": 53
-  },
-  "addresses": {
-    "dns": "{{ ansible_default_ipv4.address }}"
   }
 }
