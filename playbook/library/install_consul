@@ -1,0 +1,60 @@
+#!/usr/bin/python
+# coding: utf8
+
+import os
+import urllib2
+import shutil
+import subprocess
+import tempfile
+import zipfile
+from contextlib import closing
+
+
+CONSUL_VERSION = '0.5.2'
+CONSUL_DOWNLOAD_URL = 'https://dl.bintray.com/mitchellh/consul/{}_linux_amd64.zip'.format(CONSUL_VERSION)
+
+
+def is_consul_installed():
+    try:
+        consul_version_output = subprocess.check_output(['consul', 'version'])
+        return True
+    except (subprocess.CalledProcessError, OSError):
+        pass
+    return False
+
+
+def install_consul():
+    with tempfile.NamedTemporaryFile() as temp_f:
+        with closing(urllib2.urlopen(CONSUL_DOWNLOAD_URL)) as content_f:
+            temp_f.write(content_f.read())
+        
+        temp_f.flush()
+        temp_f.seek(0)
+        
+        with zipfile.ZipFile(temp_f, 'r') as archive:
+            archive.extract('consul', '/usr/local/bin/')
+        
+        os.chmod('/usr/local/bin/consul', 0755)
+
+
+def main():
+    module = AnsibleModule(
+        argument_spec = dict(
+            state=dict(default='present', choices=['present', 'absent']),
+        )
+    )
+    
+    if not is_consul_installed():
+        install_consul()
+        module.exit_json(changed=True)
+        return
+    
+    module.exit_json(changed=False)
+
+
+# Module snippet
+
+from ansible.module_utils.basic import *
+
+if __name__ == '__main__':
+    main()

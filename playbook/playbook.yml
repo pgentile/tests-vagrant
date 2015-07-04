@@ -1,0 +1,52 @@
+---
+- hosts: all
+  tasks:
+    - name: MàJ cache APT
+      apt: update_cache=yes
+      sudo: yes
+    
+    - name: Installer docker
+      apt: name=docker.io state=present
+      sudo: yes
+    
+    - name: Installer collectd
+      apt: name=collectd state=present
+      sudo: yes
+      
+    # Toutes les étapes de config de Consul devraient terminer dans un paquet .deb
+      
+    - name: Installer Consul
+      install_consul: state=present
+      sudo: yes
+    
+    - name: Installer le script init.d pour Consul
+      copy: src=files/consul/init.sh dest=/etc/init.d/consul mode=0755
+      sudo: yes
+      
+    - name: Créer le répertoire de config pour Consul
+      file: name=/etc/consul state=directory
+      sudo: yes
+  
+    - name: Installer la config de Consul
+      copy: src=files/consul/base_config.json dest=/etc/consul/000_base_config.json
+      sudo: yes
+    
+    - name: Créer le répertoire runtime pour Consul
+      file: name=/var/run/consul state=directory
+      sudo: yes
+
+    - name: Configurer les Recursors pour Consul
+      configure_consul_recursors: state=present
+      sudo: yes
+    
+    - name: Ajouter le script de contrôle de Docker
+      copy: src=files/consul/check_docker.sh dest=/etc/consul/ mode=0700
+      sudo: yes
+      
+    - name: Ajouter la config du service Consul pour Docker
+      copy: src=files/consul/service_docker.json dest=/etc/consul/
+      sudo: yes
+
+    - name: Démarrer Consul
+      service: name=consul state=restarted enabled=yes
+      sudo: yes

@@ -1,0 +1,40 @@
+#!/usr/bin/python
+# coding: utf8
+
+import json
+
+
+RESOLV_CONF_FILE = '/etc/resolv.conf'
+CONSUL_RECURSORS_FILE = '/etc/consul/recursors.json'
+
+
+def main():
+    module = AnsibleModule(
+        argument_spec = dict(
+            state=dict(default='present', choices=['present', 'absent']),
+        )
+    )
+    
+    nameservers = []
+    with open(RESOLV_CONF_FILE, 'r') as resolv_f:
+        for line in resolv_f:
+            parts = line.strip().split(' ')
+            if len(parts) >= 2 and parts[0] == 'nameserver':
+                nameservers.append(parts[1])
+    
+    consul_config = dict(
+        recursors=nameservers
+    )
+    
+    with open(CONSUL_RECURSORS_FILE, 'w') as recursors_f:
+        json.dump(consul_config, recursors_f, indent=True)
+    
+    module.exit_json(changed=True)
+
+
+# Module snippet
+
+from ansible.module_utils.basic import *
+
+if __name__ == '__main__':
+    main()

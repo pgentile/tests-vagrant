@@ -1,0 +1,12 @@
+{
+  "service": {
+    "name": "docker",
+    "tags": ["docker"],
+    "checks": [
+      {
+        "script": "/etc/consul/check_docker.sh",
+        "interval": "15s"
+      }
+    ]
+  }
+}
