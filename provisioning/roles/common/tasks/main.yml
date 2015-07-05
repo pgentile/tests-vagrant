@@ -3,13 +3,10 @@
 - name: Ajouter les backports Jessie
   apt_repository: repo='deb http://http.debian.net/debian jessie-backports main' state=present
   sudo: yes
-  notify:
-    - update apt-cache
 
-- name: Update apt-cache (forcé)
+- name: Update apt-cache
   apt: update_cache=yes
   sudo: yes
-  when: update_apt_cache is defined
 
 - name: Installer les paquets de base
   apt: name={{ item }} state=present
