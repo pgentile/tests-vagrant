@@ -9,6 +9,11 @@
   sudo: yes
   notify:
     - restart consul
+
+# TODO Etape à rendre optionelle
+- name: Enregister Consul dans les services
+  shell: systemctl enable consul.service
+  sudo: yes
   
 - name: Créer le répertoire de config pour Consul
   file: name=/etc/consul state=directory

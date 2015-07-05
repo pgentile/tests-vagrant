@@ -1,4 +1,8 @@
 ---
+  
+- name: Ajouter ma clé SSH
+  authorized_key: user={{ vagrant_user }} key="{{ lookup('file', '/Users/pgentile/.ssh/id_rsa.pub') }}"
+  when: vagrant_user is defined
 
 - name: Ajouter les backports Jessie
   apt_repository: repo='deb http://http.debian.net/debian jessie-backports main' state=present

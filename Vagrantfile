@@ -8,11 +8,28 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "private_network", type: "dhcp"
   
   config.vm.box = "debian/jessie64"
-  config.vm.hostname = "miniprod"
-    
+
+  # TODO Rechercher le HOME en ruby, support id_dsa
+  
+  config.vm.define "consul-master" do |machine|
+    machine.vm.hostname = "consulmaster"
+  end
+  
+  config.vm.define "client1" do |machine|
+    machine.vm.hostname = "client1"
+  end
+  
+  config.vm.define "client2" do |machine|
+    machine.vm.hostname = "client2"
+  end
+  
   config.vm.provision "ansible" do |ansible|
       ansible.playbook = "provisioning/site.yml"
-      ansible.verbose = "v"
+      
+      ansible.groups = {
+        "consul-master" => ["consul-master"],
+        "client" => ["client1", "client2"]
+      }
       
       ansible.extra_vars = {
         vagrant_user: "vagrant"
