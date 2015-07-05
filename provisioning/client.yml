@@ -13,3 +13,4 @@
       notify:
         - restart consul
       sudo: yes
+      when: "'consul-master' in hostvars"

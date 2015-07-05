@@ -1,2 +1,2 @@
 # Utiliser le DNS de Consul
-DOCKER_OPTS="--dns {{ ansible_eth1.ipv4.address | to_nice_json }}"
+DOCKER_OPTS="--dns {{ ansible_eth1.ipv4.address }}"
