@@ -1,0 +1,5 @@
+---
+- hosts: all
+  tasks:
+    - name: Ajouter ma clé SSH
+      authorized_key: user=vagrant key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"

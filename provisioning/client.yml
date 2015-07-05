@@ -1,6 +1,5 @@
 ---
 - hosts: client
-  serial: 1
   roles:
     - common
     # - collectd  # Trop long
@@ -13,4 +12,3 @@
       notify:
         - restart consul
       sudo: yes
-      when: "'consul-master' in hostvars"

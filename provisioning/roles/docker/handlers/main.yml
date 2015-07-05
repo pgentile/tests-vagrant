@@ -1,5 +1,5 @@
 ---
 
 - name: restart docker
-  service: name=docker state=restarted
+  service: name=docker state=restarted update=yes
   sudo: yes

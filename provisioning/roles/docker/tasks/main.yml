@@ -5,12 +5,7 @@
   sudo: yes
   notify:
     - restart docker
-    
-- name: "Ajouter l'user vagrant dans Docker"
-  user: name={{ vagrant_user }} groups=docker append=yes
-  sudo: yes
-  when: vagrant_user is defined
-  
+
 - name: Ajouter le script de contrôle de Docker
   copy: src=consul/check_docker.sh dest=/etc/consul/ mode=0700
   sudo: yes
