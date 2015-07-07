@@ -1,5 +1,5 @@
 ---
   
 - name: Installer collectd
-  apt: name=collectd state=present
+  apt: name=collectd-core state=present
   sudo: yes

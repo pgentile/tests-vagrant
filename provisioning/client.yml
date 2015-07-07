@@ -2,13 +2,6 @@
 - hosts: client
   roles:
     - common
-    # - collectd  # Trop long
-    - consul
+    - collectd
+    - consul-client
     - docker
-
-  tasks:
-    - name: Configurer le master Consul
-      template: src=consul_client.json.j2 dest=/etc/consul/consul_client.json
-      notify:
-        - restart consul
-      sudo: yes

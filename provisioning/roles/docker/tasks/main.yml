@@ -15,8 +15,6 @@
   sudo: yes
   notify:
     - restart consul
-
-# Configurer Docker pour utiliser le DNS de Consul
   
 - name: Ajouter la config du service Consul pour Docker
   template: src=daemon.conf.j2 dest=/etc/default/docker

@@ -1,7 +1,6 @@
 ---
 - hosts: consul-master
-  serial: 1
   roles:
     - common
-    # - collectd  # Trop long
+    - collectd
     - consul-master

@@ -5,7 +5,7 @@
     
   tasks:
     - name: Créer mon compte
-      user: name={{ admin_user }} groups=sudo shell=/bin/bash
+      user: name={{ admin_user }} shell=/bin/bash
       sudo: yes
       
     - name: Ajouter ma clé SSH
