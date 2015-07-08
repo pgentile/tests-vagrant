@@ -4,10 +4,6 @@
   apt: name=collectd-core state=present
   sudo: yes
 
-- name: Répertoire de sortie des CSV de collectd
-  file: name=/var/run/collectd/csv state=directory
-  sudo: yes
-
 - name: Configurer collectd
   copy: src=collectd.conf dest=/etc/collectd/collectd.conf
   sudo: yes

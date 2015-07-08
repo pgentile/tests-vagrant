@@ -5,7 +5,6 @@ import json
 
 
 RESOLV_CONF_FILE = '/etc/resolv.conf'
-CONSUL_RECURSORS_FILE = '/etc/consul/recursors.json'
 
 
 def main():
@@ -22,14 +21,7 @@ def main():
             if len(parts) >= 2 and parts[0] == 'nameserver':
                 nameservers.append(parts[1])
     
-    consul_config = dict(
-        recursors=nameservers
-    )
-    
-    with open(CONSUL_RECURSORS_FILE, 'w') as recursors_f:
-        json.dump(consul_config, recursors_f, indent=True)
-    
-    module.exit_json(changed=True)
+    module.exit_json(changed=False, nameservers=nameservers)
 
 
 # Module snippet

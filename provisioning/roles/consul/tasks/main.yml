@@ -19,20 +19,22 @@
   file: name=/etc/consul state=directory
   sudo: yes
 
+- name: Créer le répertoire runtime pour Consul
+  file: name=/var/run/consul state=directory
+  sudo: yes
+
 - name: Installer la config de Consul
   template: src=base_config.json.j2 dest=/etc/consul/000_base_config.json
   sudo: yes
   notify:
     - restart consul
 
-- name: Créer le répertoire runtime pour Consul
-  file: name=/var/run/consul state=directory
-  sudo: yes
-  notify:
-    - restart consul
-
-- name: Configurer les Recursors pour Consul
-  configure_consul_recursors: state=present
+- name: Obtenir les DNS
+  get_dns_servers: {}
+  register: nameservers
+  
+- name: Configurer les recusors Consul
+  template: src=recursors.json.j2 dest=/etc/profile.d/recursors.json
   sudo: yes
   notify:
     - restart consul
