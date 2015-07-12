@@ -2,6 +2,7 @@
 - hosts: client
   roles:
     - common
+    - pip
     - collectd
     - consul-client
     - docker

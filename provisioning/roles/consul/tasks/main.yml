@@ -12,7 +12,8 @@
 
 # TODO Etape à rendre optionelle
 - name: Enregister Consul dans les services
-  shell: systemctl enable consul.service
+  register_service: name=consul state=present
+  # shell: systemctl enable consul.service
   sudo: yes
   
 - name: Créer le répertoire de config pour Consul

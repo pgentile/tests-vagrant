@@ -1,0 +1,68 @@
+#!/usr/bin/python
+# coding: utf8
+
+import os
+import os.path
+import urllib2
+import shutil
+import subprocess
+import tempfile
+import zipfile
+from contextlib import closing
+
+
+def list_registred_services():
+    output = subprocess.check_output(['systemctl'])
+    for line in output.splitlines():
+        parts = line.split()
+        if len(parts) == 0:
+            continue
+        service = parts[0]
+        if service.endswith('.service'):
+            yield service
+
+
+def enable_service(name):
+    subprocess.check_output(['systemctl', 'enable', name + ".service"])
+
+
+def disable_service(name):
+    subprocess.check_output(['systemctl', 'disable', name + ".service"])
+
+
+def main():
+    module = AnsibleModule(
+        argument_spec = dict(
+            state=dict(default='present', choices=['present', 'absent']),
+            name=dict(required=True),
+        )
+    )
+    
+    module_name = module.params['name']
+    state = module.params['state']
+    
+    registred_services = list(list_registred_services())
+    has_module = (module_name + ".service") in registred_services
+    
+    changed = False
+    
+    if state == 'present':
+        if not has_module:
+            enable_service()
+            changed = True
+    elif state == 'absent':
+        if has_module:
+            disable_service()
+            changed = True
+    else:
+        raise ValueError("Unknown state: {}".format(state))
+    
+    module.exit_json(changed=changed)
+
+
+# Module snippet
+
+from ansible.module_utils.basic import *
+
+if __name__ == '__main__':
+    main()

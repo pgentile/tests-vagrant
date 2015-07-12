@@ -21,3 +21,18 @@
   sudo: yes
   notify:
     - restart docker
+
+- name: Install Docker Python API
+  pip: name=docker-py
+  sudo: yes
+
+- name: Lancer Docker UI
+  docker:
+    name: dockerui
+    image: dockerui/dockerui
+    privileged: yes
+    ports: "9000:9000"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    docker_api_version: 1.18
+  sudo: yes
