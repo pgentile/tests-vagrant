@@ -5,12 +5,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Ne pas synchroniser le contenu du répertoire
   config.vm.synced_folder ".", "/vagrant", disabled: true
   
+  # Debian Jessie
   config.vm.box = "debian/jessie64"
+  
+  # Master consul
   
   config.vm.define "consul-master" do |machine|
     machine.vm.hostname = "consulmaster"
     machine.vm.network "private_network", ip: "172.28.0.2", netmask: "255.255.128.0"
   end
+  
+  # Clients consul
   
   clients = 1..3
   
@@ -20,6 +25,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       machine.vm.network "private_network", ip: "172.28.#{num}.2", netmask: "255.255.128.0"
     end
   end
+  
+  # Masterization des machines avec Ansible
   
   config.vm.provision "ansible" do |ansible|
       ansible.playbook = "masterize/playbook.yml"
