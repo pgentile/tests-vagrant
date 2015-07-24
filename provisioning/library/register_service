@@ -48,11 +48,11 @@ def main():
     
     if state == 'present':
         if not has_module:
-            enable_service()
+            enable_service(module_name)
             changed = True
     elif state == 'absent':
         if has_module:
-            disable_service()
+            disable_service(module_name)
             changed = True
     else:
         raise ValueError("Unknown state: {}".format(state))

@@ -9,9 +9,7 @@ RESOLV_CONF_FILE = '/etc/resolv.conf'
 
 def main():
     module = AnsibleModule(
-        argument_spec = dict(
-            state=dict(default='present', choices=['present', 'absent']),
-        )
+        argument_spec={}
     )
     
     nameservers = []

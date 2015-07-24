@@ -12,14 +12,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     machine.vm.network "private_network", ip: "172.28.0.2", netmask: "255.255.128.0"
   end
   
-  config.vm.define "client1" do |machine|
-    machine.vm.hostname = "client1"
-    machine.vm.network "private_network", ip: "172.28.1.2", netmask: "255.255.128.0"
-  end
+  clients = 1..3
   
-  config.vm.define "client2" do |machine|
-    machine.vm.hostname = "client2"
-    machine.vm.network "private_network", ip: "172.28.2.2", netmask: "255.255.128.0"
+  clients.each do |num|
+    config.vm.define "client#{num}" do |machine|
+      machine.vm.hostname = "client#{num}"
+      machine.vm.network "private_network", ip: "172.28.#{num}.2", netmask: "255.255.128.0"
+    end
   end
   
   config.vm.provision "ansible" do |ansible|
@@ -27,7 +26,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       
       ansible.groups = {
         "consul-master" => ["consul-master"],
-        "client" => ["client1", "client2"]
+        "client" => clients.map { |num| "client#{num}" }
       }
   end
   
