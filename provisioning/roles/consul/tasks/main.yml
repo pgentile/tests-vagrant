@@ -10,10 +10,8 @@
   notify:
     - restart consul
 
-# TODO Etape à rendre optionelle
 - name: Enregister Consul dans les services
   register_service: name=consul state=present
-  # shell: systemctl enable consul.service
   sudo: yes
   
 - name: Créer le répertoire de config pour Consul
@@ -23,6 +21,12 @@
 - name: Créer le répertoire runtime pour Consul
   file: name=/var/run/consul state=directory
   sudo: yes
+  
+- name: Configurer le deamon Consul
+  copy: src=daemon.conf dest=/etc/default/consul
+  sudo: yes
+  notify:
+    - restart consul
 
 - name: Installer la config de Consul
   template: src=base_config.json.j2 dest=/etc/consul/000_base_config.json

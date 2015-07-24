@@ -1,11 +1,29 @@
 ---
+
+- name: Installer le transport HTTPS pour APT
+  apt: name=apt-transport-https state=present
+  sudo: yes
+
+- name: Installer la clé du repo docker
+  apt_key: keyserver=p80.pool.sks-keyservers.net id=58118E89F3A912897C070ADBF76221572C52609D
+  sudo: yes
+
+- name: Ajout repository APT Docker
+  apt_repository: repo='deb https://apt.dockerproject.org/repo debian-jessie main' state=present
+  sudo: yes
+  
+- name: Desinstaller docker.io
+  apt: name=docker.io state=absent
+  sudo: yes
+  tags:
+    - cleanup
   
 - name: Installer docker
-  apt: name=docker.io state=present
+  apt: name=docker-engine state=present
   sudo: yes
   notify:
     - restart docker
-
+    
 - name: Ajouter le script de contrôle de Docker
   copy: src=consul/check_docker.sh dest=/etc/consul/ mode=0700
   sudo: yes
@@ -16,7 +34,7 @@
   notify:
     - restart consul
   
-- name: Ajouter la config du service Consul pour Docker
+- name: Configurer le deamon Docker
   template: src=daemon.conf.j2 dest=/etc/default/docker
   sudo: yes
   notify:
