@@ -7,19 +7,26 @@ import json
 RESOLV_CONF_FILE = '/etc/resolv.conf'
 
 
+def read_nameservers():
+    with open(RESOLV_CONF_FILE, 'r') as resolv_f:
+        for line in resolv_f:
+            parts = line.strip().split(' ')
+            if len(parts) >= 2 and parts[0] == 'nameserver':
+                yield parts[1]
+
+
 def main():
     module = AnsibleModule(
         argument_spec={}
     )
     
-    nameservers = []
-    with open(RESOLV_CONF_FILE, 'r') as resolv_f:
-        for line in resolv_f:
-            parts = line.strip().split(' ')
-            if len(parts) >= 2 and parts[0] == 'nameserver':
-                nameservers.append(parts[1])
-    
-    module.exit_json(changed=False, nameservers=nameservers)
+    nameservers = list(read_nameservers())
+    module.exit_json(
+        changed=False,
+        ansible_facts=dict(
+            nameservers=nameservers,
+        ),
+    )
 
 
 # Module snippet

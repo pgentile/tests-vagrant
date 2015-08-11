@@ -1,5 +1,8 @@
 ---
-  
+
+- name: Obtenir les DNS
+  get_dns_servers: {}
+
 - name: Installer Consul
   install_consul: state=present
   sudo: yes
@@ -22,7 +25,7 @@
   file: name=/var/run/consul state=directory
   sudo: yes
   
-- name: Configurer le deamon Consul
+- name: Configurer le daemon Consul
   copy: src=daemon.conf dest=/etc/default/consul
   sudo: yes
   notify:
@@ -33,16 +36,19 @@
   sudo: yes
   notify:
     - restart consul
-
-- name: Obtenir les DNS
-  get_dns_servers: {}
-  register: nameservers
   
 - name: Configurer les recusors Consul
-  template: src=recursors.json.j2 dest=/etc/profile.d/recursors.json
+  template: src=recursors.json.j2 dest=/etc/consul/recursors.json
   sudo: yes
   notify:
     - restart consul
+
+- name: Supprimer le fichier /etc/profile.d/recursors.json mal placé
+  file: name=/etc/profile.d/recursors.json state=absent
+  sudo: yes
+  tags:
+    - cleanup
+    - fix
 
 - name: Installer la config pour le client Consul
   template: src=profile.sh.j2 dest=/etc/profile.d/consul-client.sh

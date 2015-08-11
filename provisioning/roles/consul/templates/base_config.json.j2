@@ -6,5 +6,8 @@
   "advertise_addr": {{ ansible_eth1.ipv4.address | to_nice_json }},
   "ports": {
     "dns": 53
+  },
+  "dns_config": {
+    "allow_stale": true
   }
 }
