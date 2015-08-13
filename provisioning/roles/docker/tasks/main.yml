@@ -19,7 +19,7 @@
     - cleanup
   
 - name: Installer docker
-  apt: name=docker-engine state=present
+  apt: "name=docker-engine state={{package_state}}"
   sudo: yes
   notify:
     - restart docker
