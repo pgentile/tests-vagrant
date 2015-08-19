@@ -44,6 +44,13 @@
   pip: name=docker-py
   sudo: yes
 
+- name: "Flusher les handlers éventuellement activés, comme le restart de docker"
+  meta: flush_handlers
+
+- name: S'assurer que Docker est bien lancé avant de démarrer des containers (comme Docker UI)
+  service: name=docker state=started
+  sudo: yes
+
 - name: Lancer Docker UI
   docker:
     name: dockerui
