@@ -1,0 +1,44 @@
+Lien depuis client 1 vers client 2
+==================================
+
+sudo ovs-vsctl del-br br0
+
+sudo ovs-vsctl add-br br0 -- set bridge br0 stp_enable=true
+sudo ip link set mtu 1450 dev br0
+
+# GRE link client1 <-> client2
+sudo ovs-vsctl add-port br0 gre0102 -- set interface gre0102 type=gre options:remote_ip=172.28.0.4
+
+## sudo /sbin/ifconfig br0 172.29.0.3 netmask 255.255.255.0
+sudo ip addr add 172.29.0.3/24 dev br0
+
+
+# Vers client 3
+sudo ovs-vsctl add-port br0 gre1 -- set interface gre1 type=gre options:remote_ip=172.28.0.5
+# Sur client 3
+sudo ovs-vsctl add-port br0 gre1 -- set interface gre1 type=gre options:remote_ip=172.28.0.3
+sudo /sbin/ifconfig br0 172.28.1.5 netmask 255.255.255.0
+
+
+Lien depuis client 2 vers client 1
+==================================
+
+sudo ovs-vsctl add-br br0 -- set bridge br0 stp_enable=true
+sudo ip link set mtu 1450 dev br0
+
+# GRE link client1 <-> client2
+sudo ovs-vsctl add-port br0 gre0102 -- set interface gre0102 type=gre options:remote_ip=172.28.0.3
+
+sudo /sbin/ifconfig br0 172.29.0.4 netmask 255.255.255.0
+
+# DONT USE THIS
+# sudo ovs-vsctl add-port br0 eth1
+# sudo /sbin/ifconfig eth1 0
+# sudo /sbin/ifconfig eth1 0 && sudo /sbin/ifconfig eth1 172.28.0.4 netmask 255.255.255.0
+
+
+Ressources
+==========
+
+- https://wiredcraft.com/blog/multi-host-docker-network/
+

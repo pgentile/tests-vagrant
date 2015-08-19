@@ -4,6 +4,7 @@
     - client
   roles:
     - common
+    - openvswitch
     - collectd
     - consul-client
     - docker
