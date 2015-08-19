@@ -1,5 +1,7 @@
 ---
 - hosts: consul-master
+  tags:
+    - consul-master
   roles:
     - common
     - collectd
