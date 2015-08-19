@@ -16,7 +16,7 @@
   apt: name=docker.io state=absent
   sudo: yes
   tags:
-    - cleanup
+    - fix
   
 - name: Installer docker
   apt: "name=docker-engine state={{package_state}}"

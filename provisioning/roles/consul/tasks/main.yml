@@ -47,7 +47,6 @@
   file: name=/etc/profile.d/recursors.json state=absent
   sudo: yes
   tags:
-    - cleanup
     - fix
 
 - name: Installer la config pour le client Consul
