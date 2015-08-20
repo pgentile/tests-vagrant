@@ -4,13 +4,57 @@
     - client
   roles:
     - common
-    - openvswitch
     - collectd
     - consul-client
-    - docker
+
+# IP utilisée pour l'interface Docker : 172.29.x.1/20
+# Pour avoir l'instance par client : HEX.HEX.X0.01/20 (en hexa)
+# Pour définir les IP utilisables par les instances Docker : HEX.HEX.X1.xx/24
 
 - hosts: client1
-  tags:
-    - docker-over-ovs
+  tags: client
   roles:
-    - docker-over-ovs
+    - role: docker
+      docker_interface_address: 172.29.0.2/16
+
+- hosts: client2
+  tags: client
+  roles:
+    - role: docker
+      docker_interface_address: 172.29.16.2/16
+
+- hosts: client3
+  tags: client
+  roles:
+    - role: docker
+      docker_interface_address: 172.29.32.2/16
+
+- hosts: client1
+  tags: client
+  tasks:
+    - name: Config lien GRE 1-2
+      script: roles/docker/files/create-gre-tunnel.sh br0 gre-001-002 {{ hostvars.client2.ansible_eth1.ipv4.address }}
+      sudo: yes
+    - name: Config lien GRE 1-3
+      script: roles/docker/files/create-gre-tunnel.sh br0 gre-001-003 {{ hostvars.client3.ansible_eth1.ipv4.address }}
+      sudo: yes
+
+- hosts: client2
+  tags: client
+  tasks:
+    - name: Config lien GRE 1-2
+      script: roles/docker/files/create-gre-tunnel.sh br0 gre-001-002 {{ hostvars.client1.ansible_eth1.ipv4.address }}
+      sudo: yes
+    - name: Config lien GRE 2-3
+      script: roles/docker/files/create-gre-tunnel.sh br0 gre-002-003 {{ hostvars.client3.ansible_eth1.ipv4.address }}
+      sudo: yes
+
+- hosts: client3
+  tags: client
+  tasks:
+    - name: Config lien GRE 1-3
+      script: roles/docker/files/create-gre-tunnel.sh br0 gre-001-003 {{ hostvars.client1.ansible_eth1.ipv4.address }}
+      sudo: yes
+    - name: Config lien GRE 2-3
+      script: roles/docker/files/create-gre-tunnel.sh br0 gre-002-003 {{ hostvars.client2.ansible_eth1.ipv4.address }}
+      sudo: yes

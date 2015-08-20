@@ -14,5 +14,12 @@
     - iptables
     - logwatch
     - ufw
+  sudo: yes
+
+- name: Supprimer les paquets non nécessaires
+  apt: name={{ item }} state=absent
+  with_items:
     - bridge-utils
   sudo: yes
+  tags:
+    - fix

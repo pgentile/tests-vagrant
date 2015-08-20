@@ -1,5 +1,0 @@
----
-
-- name: Installer Open vSwitch
-  apt: name=openvswitch-switch state=present
-  sudo: yes

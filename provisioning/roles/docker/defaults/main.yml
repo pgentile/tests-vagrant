@@ -1,2 +1,3 @@
 ---
-package_state: present
+docker_package_state: present
+docker_mtu: 1450

@@ -17,13 +17,21 @@
   sudo: yes
   tags:
     - fix
-  
-- name: Installer docker
-  apt: "name=docker-engine state={{package_state}}"
+
+- name: Installer les paquets nécessaires pour Docker
+  apt: name={{ item }} state={{docker_package_state}}
+  with_items:
+    - docker-engine
+    - openvswitch-switch
+    - bridge-utils
+  sudo: yes
+
+- name: Create bridge
+  script: create-bridge.sh docker0 br0 {{docker_interface_address}} {{docker_mtu}}
   sudo: yes
   notify:
     - restart docker
-    
+
 - name: Ajouter le script de contrôle de Docker
   copy: src=consul/check_docker.sh dest=/etc/consul/ mode=0700
   sudo: yes
@@ -40,15 +48,19 @@
   notify:
     - restart docker
 
-- name: Install Docker Python API
-  pip: name=docker-py
-  sudo: yes
-
 - name: "Flusher les handlers éventuellement activés, comme le restart de docker"
   meta: flush_handlers
 
 - name: S'assurer que Docker est bien lancé avant de démarrer des containers (comme Docker UI)
   service: name=docker state=started
+  sudo: yes
+
+- name: Install pip
+  easy_install: name=pip
+  sudo: yes
+
+- name: Install Docker Python API
+  pip: name=docker-py state=present
   sudo: yes
 
 - name: Lancer Docker UI

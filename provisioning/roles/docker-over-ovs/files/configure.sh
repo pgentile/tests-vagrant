@@ -35,9 +35,6 @@ sudo ip link set mtu $MTU dev $BRIDGE_NAME
 # Add the br0 Open vSwitch bridge
 ovs-vsctl add-br br0
 sudo ip link set mtu $MTU dev br0
-# Create the tunnel to the other host and attach it to the
-# br0 bridge
-ovs-vsctl add-port br0 gre0 -- set interface gre0 type=gre options:remote_ip=$REMOTE_IP
 # Add the br0 bridge to docker0 bridge
 brctl addif $BRIDGE_NAME br0
 # Activate the bridge
@@ -47,4 +44,11 @@ ip link set $BRIDGE_NAME up
 # Set up the IP for the docker0 bridge
 ip addr add $BRIDGE_ADDRESS dev $BRIDGE_NAME
 
+# Create the tunnel to the other host and attach it to the
+# br0 bridge
+ovs-vsctl add-port br0 gre0 -- set interface gre0 type=gre options:remote_ip=$REMOTE_IP
+
 service docker start
+
+
+exit 2
