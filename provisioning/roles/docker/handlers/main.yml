@@ -1,5 +1,26 @@
 ---
 
+# Pour relancer docker, il faut également relancer systemd, si la conf de l'unit Docker a été modifiée.
+# Merci systemd...
+#
+# On enchaine alors les étapes suivantes en chainant les notifications :
+#  - systemctl daemon-reload
+#  - pause de 5 seconds
+#  - docker restart
+
+- name: restart systemd
+  command: systemctl daemon-reload
+  sudo: yes
+  notify:
+    - wait for systemd
+
+- name: wait for systemd
+  pause: seconds=5
+
 - name: restart docker
   service: name=docker state=restarted
+  sudo: yes
+
+- name: restart consul
+  service: name=consul state=restarted
   sudo: yes
