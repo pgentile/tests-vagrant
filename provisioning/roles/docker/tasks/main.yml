@@ -43,14 +43,31 @@
     - restart consul
   
 - name: Configurer le deamon Docker
-  template: src=daemon.conf.j2 dest=/etc/default/docker
+  template: src=docker.service.j2 dest=/lib/systemd/system/docker.service
   sudo: yes
   notify:
     - restart docker
+  
+- name: "Supprimer l'ancien fichier de conf du daemon Docker, non utilisé"
+  file: name={{ item }} state=absent
+  sudo: yes
+  with_items:
+    - /etc/systemd/system/docker.service
+    - /etc/default/docker
+  tags:
+    - fix
 
+- name: Relance system
+  command: systemctl daemon-reload
+  sudo: true
+  
+  # systemctl est vraiment une grosse merde, impossible de l'utiliser en handler a cause de la pause...
+- name: Attendre un peu avant la relance de systemctl
+  pause: seconds=5
+  
 - name: "Flusher les handlers éventuellement activés, comme le restart de docker"
   meta: flush_handlers
-
+  
 - name: S'assurer que Docker est bien lancé avant de démarrer des containers (comme Docker UI)
   service: name=docker state=started
   sudo: yes
