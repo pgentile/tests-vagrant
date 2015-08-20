@@ -8,3 +8,9 @@
     - collectd
     - consul-client
     - docker
+
+- hosts: client1
+  tags:
+    - docker-over-ovs
+  roles:
+    - docker-over-ovs

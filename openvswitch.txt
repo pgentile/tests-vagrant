@@ -1,6 +1,47 @@
 Lien depuis client 1 vers client 2
 ==================================
 
+# The 'other' host
+REMOTE_IP=172.28.0.4
+# Name of the bridge
+BRIDGE_NAME=docker0
+# Bridge address
+BRIDGE_ADDRESS=172.16.42.2/24
+
+# Deactivate the docker0 bridge
+ip link set $BRIDGE_NAME down
+# Remove the docker0 bridge
+brctl delbr $BRIDGE_NAME
+# Delete the Open vSwitch bridge
+ovs-vsctl del-br br0
+# Add the docker0 bridge
+brctl addbr $BRIDGE_NAME
+# Set up the IP for the docker0 bridge
+ip a add $BRIDGE_ADDRESS dev $BRIDGE_NAME
+# Activate the bridge
+ip link set $BRIDGE_NAME up
+# Add the br0 Open vSwitch bridge
+ovs-vsctl add-br br0
+# Create the tunnel to the other host and attach it to the
+# br0 bridge
+ovs-vsctl add-port br0 gre0 -- set interface gre0 type=gre options:remote_ip=$REMOTE_IP
+# Add the br0 bridge to docker0 bridge
+brctl addif $BRIDGE_NAME br0
+
+
+
+
+# Other side
+sudo ovs-vsctl add-br br0 -- set bridge br0 stp_enable=true
+sudo ovs-vsctl add-port br0 gre0 -- set interface gre0 type=gre options:remote_ip=172.28.0.3
+
+sudo ip addr add 172.16.42.2/24 dev br0
+
+
+
+
+
+
 sudo ovs-vsctl del-br br0
 
 sudo ovs-vsctl add-br br0 -- set bridge br0 stp_enable=true
@@ -13,6 +54,11 @@ sudo ovs-vsctl add-port br0 gre0102 -- set interface gre0102 type=gre options:re
 sudo ip addr add 172.29.0.3/24 dev br0
 
 
+
+sudo docker run -d debian:jessie sleep 3600
+
+
+
 # Vers client 3
 sudo ovs-vsctl add-port br0 gre1 -- set interface gre1 type=gre options:remote_ip=172.28.0.5
 # Sur client 3
@@ -22,6 +68,8 @@ sudo /sbin/ifconfig br0 172.28.1.5 netmask 255.255.255.0
 
 Lien depuis client 2 vers client 1
 ==================================
+
+sudo ovs-vsctl del-br br0
 
 sudo ovs-vsctl add-br br0 -- set bridge br0 stp_enable=true
 sudo ip link set mtu 1450 dev br0
@@ -41,4 +89,4 @@ Ressources
 ==========
 
 - https://wiredcraft.com/blog/multi-host-docker-network/
-
+- https://goldmann.pl/blog/2014/01/21/connecting-docker-containers-on-multiple-hosts/

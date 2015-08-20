@@ -1,0 +1,14 @@
+---
+
+# - set_facts:
+#     docker_over_ovs:
+#       client1:
+#         
+
+- name: inventory_hostname courant
+  debug: msg={{ inventory_hostname }}
+
+- name: Setup Docker over Openvswitch
+  script: configure.sh
+  sudo: yes
+  
