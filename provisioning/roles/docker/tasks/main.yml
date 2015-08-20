@@ -67,10 +67,6 @@
   service: name=docker state=started
   sudo: yes
 
-- name: Install pip
-  easy_install: name=pip
-  sudo: yes
-
 - name: Install Docker Python API
   pip: name=docker-py state=present
   sudo: yes
