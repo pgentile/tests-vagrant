@@ -5,7 +5,7 @@
     "checks": [
       {
         "script": "/etc/consul/check_docker.sh",
-        "interval": "15s"
+        "interval": "1m"
       }
     ]
   }
