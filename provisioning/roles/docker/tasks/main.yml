@@ -40,7 +40,7 @@
   copy: src=consul/service_docker.json dest=/etc/consul/
   sudo: yes
   notify:
-    - restart consul
+    - reload consul config
   
 - name: Configurer le deamon Docker
   template: src=docker.service.j2 dest=/lib/systemd/system/docker.service

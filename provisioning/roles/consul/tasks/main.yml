@@ -43,12 +43,22 @@
   notify:
     - restart consul
 
+- name: Config env var CONSUL_RPC_ADDR
+  lineinfile: dest=/etc/environment regexp='^CONSUL_RPC_ADDR=' line="CONSUL_RPC_ADDR={{ ansible_eth1.ipv4.address }}:8400"
+  sudo: yes
+
+- name: Config env var CONSUL_HTTP_ADDR
+  lineinfile: dest=/etc/environment regexp='^CONSUL_HTTP_ADDR=' line="CONSUL_HTTP_ADDR={{ ansible_eth1.ipv4.address }}:8500"
+  sudo: yes
+
 - name: Supprimer le fichier /etc/profile.d/recursors.json mal placé
   file: name=/etc/profile.d/recursors.json state=absent
   sudo: yes
   tags:
     - fix
-
-- name: Installer la config pour le client Consul
-  template: src=profile.sh.j2 dest=/etc/profile.d/consul-client.sh
+  
+- name: Supprimer le fichier profile pour Consul
+  file: name=/etc/profile.d/consul-client.sh state=absent
   sudo: yes
+  tags:
+      - fix
