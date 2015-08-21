@@ -15,22 +15,22 @@
   tags: client
   roles:
     - role: docker
-      docker_interface_address: 172.29.0.2/16
-      docker_fixed_cidr: 172.29.1.0/24
+      docker_interface_address: 172.29.0.2/12
+      docker_fixed_cidr: 172.30.0.0/20
 
 - hosts: client2
   tags: client
   roles:
     - role: docker
-      docker_interface_address: 172.29.16.2/16
-      docker_fixed_cidr: 172.29.17.0/24
+      docker_interface_address: 172.29.0.3/12
+      docker_fixed_cidr: 172.30.16.0/20
 
 - hosts: client3
   tags: client
   roles:
     - role: docker
-      docker_interface_address: 172.29.32.2/16
-      docker_fixed_cidr: 172.29.33.0/24
+      docker_interface_address: 172.29.0.3/12
+      docker_fixed_cidr: 172.30.32.0/20
 
 - hosts: client1
   tags: client
