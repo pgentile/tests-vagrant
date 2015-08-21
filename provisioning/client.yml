@@ -6,31 +6,13 @@
     - common
     - collectd
     - consul-client
+    - docker
 
+# Notes sur les IP de Docker :
+#
 # IP utilisée pour l'interface Docker : 172.29.x.1/20
 # Pour avoir l'instance par client : HEX.HEX.X0.01/20 (en hexa)
 # Pour définir les IP utilisables par les instances Docker : HEX.HEX.X1.xx/24
-
-- hosts: client1
-  tags: client
-  roles:
-    - role: docker
-      docker_interface_address: 172.29.0.2/12
-      docker_fixed_cidr: 172.30.0.0/20
-
-- hosts: client2
-  tags: client
-  roles:
-    - role: docker
-      docker_interface_address: 172.29.0.3/12
-      docker_fixed_cidr: 172.30.16.0/20
-
-- hosts: client3
-  tags: client
-  roles:
-    - role: docker
-      docker_interface_address: 172.29.0.3/12
-      docker_fixed_cidr: 172.30.32.0/20
 
 - hosts: client1
   tags: client
