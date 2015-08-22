@@ -9,5 +9,5 @@ install:
   - sudo dpkg -i vagrant_1.7.4_x86_64.deb
   - bundle install
 
- script:
+script:
   - vagrant up
