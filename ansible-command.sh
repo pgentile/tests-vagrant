@@ -3,4 +3,5 @@
 exec ansible \
     -i .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory \
     -u vagrant \
-    all -m setup
+    -b \
+    all -m command -a "$*"
