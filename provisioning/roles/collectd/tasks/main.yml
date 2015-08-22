@@ -2,10 +2,10 @@
   
 - name: Installer collectd
   apt: name=collectd-core state=present
-  sudo: yes
+  become: true
 
 - name: Configurer collectd
   copy: src=collectd.conf dest=/etc/collectd/collectd.conf
-  sudo: yes
+  become: true
   notify:
     - restart collectd

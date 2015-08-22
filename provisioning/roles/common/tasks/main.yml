@@ -2,11 +2,11 @@
 
 - name: Ajouter les backports Jessie
   apt_repository: repo='deb http://http.debian.net/debian jessie-backports main' state=present
-  sudo: yes
+  become: true
 
 - name: Update apt-cache
   apt: update_cache=yes
-  sudo: yes
+  become: true
 
 - name: Installer les paquets de base
   apt: name={{ item }} state=present
@@ -14,12 +14,12 @@
     - iptables
     - logwatch
     - ufw
-  sudo: yes
+  become: true
 
 - name: Supprimer les paquets non nécessaires
   apt: name={{ item }} state=absent
   with_items:
     - bridge-utils
-  sudo: yes
+  become: true
   tags:
     - fix

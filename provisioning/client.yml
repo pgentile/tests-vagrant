@@ -19,27 +19,27 @@
   tasks:
     - name: Config lien GRE 1-2
       script: roles/docker/files/create-gre-tunnel.sh br0 gre-001-002 {{ hostvars.client2.ansible_eth1.ipv4.address }}
-      sudo: yes
+      become: true
     - name: Config lien GRE 1-3
       script: roles/docker/files/create-gre-tunnel.sh br0 gre-001-003 {{ hostvars.client3.ansible_eth1.ipv4.address }}
-      sudo: yes
+      become: true
 
 - hosts: client2
   tags: client
   tasks:
     - name: Config lien GRE 1-2
       script: roles/docker/files/create-gre-tunnel.sh br0 gre-001-002 {{ hostvars.client1.ansible_eth1.ipv4.address }}
-      sudo: yes
+      become: true
     - name: Config lien GRE 2-3
       script: roles/docker/files/create-gre-tunnel.sh br0 gre-002-003 {{ hostvars.client3.ansible_eth1.ipv4.address }}
-      sudo: yes
+      become: true
 
 - hosts: client3
   tags: client
   tasks:
     - name: Config lien GRE 1-3
       script: roles/docker/files/create-gre-tunnel.sh br0 gre-001-003 {{ hostvars.client1.ansible_eth1.ipv4.address }}
-      sudo: yes
+      become: true
     - name: Config lien GRE 2-3
       script: roles/docker/files/create-gre-tunnel.sh br0 gre-002-003 {{ hostvars.client2.ansible_eth1.ipv4.address }}
-      sudo: yes
+      become: true

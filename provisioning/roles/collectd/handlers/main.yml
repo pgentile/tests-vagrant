@@ -2,4 +2,4 @@
 
 - name: restart collectd
   service: name=collectd state=restarted
-  sudo: yes
+  become: true

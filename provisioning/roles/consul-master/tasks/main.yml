@@ -2,4 +2,4 @@
 
 - name: Configuration serveur Consul
   copy: src=server.json dest=/etc/consul/server.json
-  sudo: yes
+  become: true

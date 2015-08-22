@@ -10,7 +10,7 @@
 
 - name: restart systemd
   command: systemctl daemon-reload
-  sudo: yes
+  become: true
   notify:
     - wait for systemd
 
@@ -19,7 +19,7 @@
 
 - name: restart docker
   service: name=docker state=restarted
-  sudo: yes
+  become: true
 
 - name: reload consul config
   command: consul reload

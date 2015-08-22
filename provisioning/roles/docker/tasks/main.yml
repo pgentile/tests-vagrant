@@ -2,19 +2,19 @@
 
 - name: Installer le transport HTTPS pour APT
   apt: name=apt-transport-https state=present
-  sudo: yes
+  become: true
 
 - name: Installer la clé du repo docker
   apt_key: keyserver=p80.pool.sks-keyservers.net id=58118E89F3A912897C070ADBF76221572C52609D
-  sudo: yes
+  become: true
 
 - name: Ajout repository APT Docker
   apt_repository: repo='deb https://apt.dockerproject.org/repo debian-jessie main' state=present
-  sudo: yes
+  become: true
   
 - name: Desinstaller docker.io
   apt: name=docker.io state=absent
-  sudo: yes
+  become: true
   tags:
     - fix
 
@@ -24,34 +24,34 @@
     - docker-engine
     - openvswitch-switch
     - bridge-utils
-  sudo: yes
+  become: true
 
 - name: Create bridge
   script: create-bridge.sh docker0 br0 {{docker_interface_address}} {{docker_mtu}}
-  sudo: yes
+  become: true
   notify:
     - restart docker
 
 - name: Ajouter le script de contrôle de Docker
   copy: src=consul/check_docker.sh dest=/etc/consul/ mode=0700
-  sudo: yes
+  become: true
   
 - name: Ajouter la config du service Consul pour Docker
   copy: src=consul/service_docker.json dest=/etc/consul/
-  sudo: yes
+  become: true
   notify:
     - reload consul config
   
 - name: Configurer le deamon Docker
   template: src=docker.service.j2 dest=/lib/systemd/system/docker.service
-  sudo: yes
+  become: true
   notify:
     - restart systemd
     - restart docker
   
 - name: "Supprimer l'ancien fichier de conf du daemon Docker, non utilisé"
   file: name={{ item }} state=absent
-  sudo: yes
+  become: true
   with_items:
     - /etc/systemd/system/docker.service
     - /etc/default/docker
@@ -65,11 +65,11 @@
   
 - name: S'assurer que Docker est bien lancé avant de démarrer des containers (comme Docker UI)
   service: name=docker state=started
-  sudo: yes
+  become: true
 
 - name: Install Docker Python API
   pip: name=docker-py state=present
-  sudo: yes
+  become: true
 
 - name: Lancer Docker UI
   docker:
@@ -80,4 +80,4 @@
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     docker_api_version: 1.18
-  sudo: yes
+  become: true

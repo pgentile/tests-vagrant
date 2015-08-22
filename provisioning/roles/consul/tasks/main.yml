@@ -5,60 +5,60 @@
 
 - name: Installer Consul
   install_consul: state=present
-  sudo: yes
+  become: true
 
 - name: Installer le script init.d pour Consul
   copy: src=init.sh dest=/etc/init.d/consul mode=0755
-  sudo: yes
+  become: true
   notify:
     - restart consul
 
 - name: Enregister Consul dans les services
   register_service: name=consul state=present
-  sudo: yes
+  become: true
   
 - name: Créer le répertoire de config pour Consul
   file: name=/etc/consul state=directory
-  sudo: yes
+  become: true
 
 - name: Créer le répertoire runtime pour Consul
   file: name=/var/run/consul state=directory
-  sudo: yes
+  become: true
   
 - name: Configurer le daemon Consul
   copy: src=daemon.conf dest=/etc/default/consul
-  sudo: yes
+  become: true
   notify:
     - restart consul
 
 - name: Installer la config de Consul
   template: src=base_config.json.j2 dest=/etc/consul/000_base_config.json
-  sudo: yes
+  become: true
   notify:
     - restart consul
   
 - name: Configurer les recusors Consul
   template: src=recursors.json.j2 dest=/etc/consul/recursors.json
-  sudo: yes
+  become: true
   notify:
     - restart consul
 
 - name: Config env var CONSUL_RPC_ADDR
   lineinfile: dest=/etc/environment regexp='^CONSUL_RPC_ADDR=' line="CONSUL_RPC_ADDR={{ ansible_eth1.ipv4.address }}:8400"
-  sudo: yes
+  become: true
 
 - name: Config env var CONSUL_HTTP_ADDR
   lineinfile: dest=/etc/environment regexp='^CONSUL_HTTP_ADDR=' line="CONSUL_HTTP_ADDR={{ ansible_eth1.ipv4.address }}:8500"
-  sudo: yes
+  become: true
 
 - name: Supprimer le fichier /etc/profile.d/recursors.json mal placé
   file: name=/etc/profile.d/recursors.json state=absent
-  sudo: yes
+  become: true
   tags:
     - fix
   
 - name: Supprimer le fichier profile pour Consul
   file: name=/etc/profile.d/consul-client.sh state=absent
-  sudo: yes
+  become: true
   tags:
       - fix

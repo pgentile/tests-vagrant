@@ -2,16 +2,16 @@
 - hosts: all
   vars:
     admin_user: pgentile
-    
+
   tasks:
     - name: Créer mon compte
       user: name={{ admin_user }} shell=/bin/bash
-      sudo: yes
-      
+      become: true
+
     - name: Ajouter ma clé SSH
       authorized_key: user={{ admin_user }} key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-      sudo: yes
+      become: true
 
     - name: ensure the user can execute sudo commands without a password
       copy: content="%{{ admin_user }} ALL=(ALL) NOPASSWD:ALL" dest=/etc/sudoers.d/{{ admin_user }} owner=root group=root mode=0440
-      sudo: yes
+      become: true

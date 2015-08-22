@@ -2,4 +2,4 @@
 
 - name: restart consul
   service: name=consul state=restarted
-  sudo: yes
+  become: true
