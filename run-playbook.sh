@@ -6,4 +6,7 @@ then
     args="--skip-tags=fix"
 fi
 
-exec ansible-playbook -i .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory provisioning/site.yml $args
+exec ansible-playbook \
+    -i .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory provisioning/site.yml \
+    -u vagrant \
+    $args
