@@ -1,0 +1,6 @@
+---
+consul_rpc_addr: "{{ ansible_eth1.ipv4.address }}"
+consul_rpc_port: 8400
+
+consul_http_addr: "{{ ansible_eth1.ipv4.address }}"
+consul_http_port: 8500

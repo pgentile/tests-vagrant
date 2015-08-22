@@ -16,7 +16,7 @@
 - name: Enregister Consul dans les services
   register_service: name=consul state=present
   become: true
-  
+
 - name: Créer le répertoire de config pour Consul
   file: name=/etc/consul state=directory
   become: true
@@ -24,7 +24,7 @@
 - name: Créer le répertoire runtime pour Consul
   file: name=/var/run/consul state=directory
   become: true
-  
+
 - name: Configurer le daemon Consul
   copy: src=daemon.conf dest=/etc/default/consul
   become: true
@@ -36,19 +36,28 @@
   become: true
   notify:
     - restart consul
-  
+
 - name: Configurer les recusors Consul
   template: src=recursors.json.j2 dest=/etc/consul/recursors.json
   become: true
   notify:
     - restart consul
 
+- name: Checking /etc/environment presence
+  stat: path=/etc/environment
+  register: etc_environment_st
+
+- name: Create /etc/environment
+  copy: dest=/etc/environment content=''
+  become: true
+  when: etc_environment_st.exists is not defined
+
 - name: Config env var CONSUL_RPC_ADDR
-  lineinfile: dest=/etc/environment regexp='^CONSUL_RPC_ADDR=' line="CONSUL_RPC_ADDR={{ ansible_eth1.ipv4.address }}:8400"
+  lineinfile: dest=/etc/environment regexp='^CONSUL_RPC_ADDR=' line="CONSUL_RPC_ADDR={{ consul_rpc_addr }}:{{ consul_rpc_port }}"
   become: true
 
 - name: Config env var CONSUL_HTTP_ADDR
-  lineinfile: dest=/etc/environment regexp='^CONSUL_HTTP_ADDR=' line="CONSUL_HTTP_ADDR={{ ansible_eth1.ipv4.address }}:8500"
+  lineinfile: dest=/etc/environment regexp='^CONSUL_HTTP_ADDR=' line="CONSUL_HTTP_ADDR={{ consul_http_addr }}:{{ consul_http_port }}"
   become: true
 
 - name: Supprimer le fichier /etc/profile.d/recursors.json mal placé
@@ -56,7 +65,7 @@
   become: true
   tags:
     - fix
-  
+
 - name: Supprimer le fichier profile pour Consul
   file: name=/etc/profile.d/consul-client.sh state=absent
   become: true

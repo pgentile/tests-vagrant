@@ -22,4 +22,4 @@
   become: true
 
 - name: reload consul config
-  command: consul reload
+  command: consul reload -rpc-addr={{ consul_rpc_addr }}:{{ consul_rpc_port }}
