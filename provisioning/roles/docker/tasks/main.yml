@@ -11,7 +11,7 @@
 - name: Ajout repository APT Docker
   apt_repository: repo='deb https://apt.dockerproject.org/repo debian-jessie main' state=present
   become: true
-  
+
 - name: Desinstaller docker.io
   apt: name=docker.io state=absent
   become: true
@@ -35,20 +35,24 @@
 - name: Ajouter le script de contrôle de Docker
   copy: src=consul/check_docker.sh dest=/etc/consul/ mode=0700
   become: true
-  
+
 - name: Ajouter la config du service Consul pour Docker
   copy: src=consul/service_docker.json dest=/etc/consul/
   become: true
   notify:
     - reload consul config
-  
+
+- name: Créer le répertoire de config systemd pour Docker
+  file: name=/etc/systemd/system/docker.service.d state=directory
+  become: true
+
 - name: Configurer le deamon Docker
-  template: src=docker.service.j2 dest=/lib/systemd/system/docker.service
+  template: src=docker.service.j2 dest=/etc/systemd/system/docker.service.d/docker.conf
   become: true
   notify:
     - restart systemd
     - restart docker
-  
+
 - name: "Supprimer l'ancien fichier de conf du daemon Docker, non utilisé"
   file: name={{ item }} state=absent
   become: true
@@ -59,10 +63,10 @@
     - restart docker
   tags:
     - fix
-  
+
 - name: "Flusher les handlers éventuellement activés, comme le restart de docker"
   meta: flush_handlers
-  
+
 - name: S'assurer que Docker est bien lancé avant de démarrer des containers (comme Docker UI)
   service: name=docker state=started
   become: true

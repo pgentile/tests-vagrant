@@ -1,16 +1,3 @@
-[Unit]
-Description=Docker Application Container Engine
-Documentation=https://docs.docker.com
-After=network.target docker.socket
-Requires=docker.socket
-
 [Service]
-Type=notify
+ExecStart=
 ExecStart=/usr/bin/docker daemon --dns={{ ansible_eth1.ipv4.address }} --mtu={{ docker_mtu }} --fixed-cidr={{ docker_fixed_cidr }} -H fd://
-MountFlags=slave
-LimitNOFILE=1048576
-LimitNPROC=1048576
-LimitCORE=infinity
-
-[Install]
-WantedBy=multi-user.target
