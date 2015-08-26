@@ -2,3 +2,6 @@
 
 /venv/
 /.vagrant/
+
+*.pyc
+*.pyo
