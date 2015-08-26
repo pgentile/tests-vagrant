@@ -1,0 +1,29 @@
+#!/usr/bin/python
+# coding: utf8
+
+import subprocess
+import time
+
+
+def main():
+    module = AnsibleModule(
+        argument_spec={},
+    )
+
+    rc, stdout, stderr = module.run_command('systemctl daemon-reload')
+    if rc:
+        module.fail_json(msg=stderr)
+        return
+
+    # Petite pause, le temps que le daemon se recharge
+    time.sleep(5)
+
+    module.exit_json(changed=True)
+
+
+# Module snippet
+
+from ansible.module_utils.basic import *
+
+if __name__ == '__main__':
+    main()

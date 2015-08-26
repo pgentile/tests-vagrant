@@ -50,7 +50,7 @@
 - name: Create /etc/environment
   copy: dest=/etc/environment content=''
   become: true
-  when: etc_environment_st.exists is not defined
+  when: etc_environment_st.stat.exists == false
 
 - name: Config env var CONSUL_RPC_ADDR
   lineinfile: dest=/etc/environment regexp='^CONSUL_RPC_ADDR=' line="CONSUL_RPC_ADDR={{ consul_rpc_addr }}:{{ consul_rpc_port }}"
