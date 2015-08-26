@@ -60,6 +60,10 @@
   lineinfile: dest=/etc/environment regexp='^CONSUL_HTTP_ADDR=' line="CONSUL_HTTP_ADDR={{ consul_http_addr }}:{{ consul_http_port }}"
   become: true
 
+- name: "S'assurer que Consul est lancé"
+  service: name=consul state=started
+  become: true
+
 - name: Supprimer le fichier /etc/profile.d/recursors.json mal placé
   file: name=/etc/profile.d/recursors.json state=absent
   become: true

@@ -32,6 +32,11 @@
   notify:
     - restart docker
 
+- name: Créer les tunnels GRE vers les autres hosts Docker
+  script: create-gre-tunnel.sh br0 {{ (item, inventory_hostname) | gre_name('gre') }} {{ hostvars[item].ansible_eth1.ipv4.address }}
+  with_items: "{{ groups.client | exclude(inventory_hostname) }}"
+  become: true
+
 - name: Ajouter le script de contrôle de Docker
   copy: src=consul/check_docker.sh dest=/etc/consul/ mode=0700
   become: true
