@@ -80,13 +80,11 @@
   pip: name=docker-py state=present
   become: true
 
-- name: Lancer Docker UI
+- name: Remove Docker UI if present
   docker:
-    name: dockerui
+    state: absent
     image: dockerui/dockerui
-    privileged: yes
-    ports: "9000:9000"
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
     docker_api_version: 1.18
   become: true
+  tags:
+    - fix
