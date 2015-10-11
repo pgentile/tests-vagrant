@@ -7,6 +7,7 @@ then
 fi
 
 exec ansible-playbook \
-    -i .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory provisioning/site.yml \
+    -i .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory \
+    provisioning/site.yml \
     -u vagrant \
     $args
