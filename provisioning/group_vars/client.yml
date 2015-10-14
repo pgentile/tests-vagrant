@@ -1,0 +1,3 @@
+---
+docker_cluster_network: 172.29.0.0/16
+docker_subnet_prefix_size: 18

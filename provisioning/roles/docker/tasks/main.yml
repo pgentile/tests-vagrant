@@ -1,5 +1,10 @@
 ---
 
+- name: Configure network settings
+  set_fact:
+    docker_interface_address: "{{ docker_cluster_network | ipaddr(2 + docker_node_id) }}"
+    docker_fixed_cidr: "{{ docker_cluster_network | ipsubnet(docker_subnet_prefix_size, 1 + docker_node_id) }}"
+
 - name: Installer le transport HTTPS pour APT
   apt: name=apt-transport-https state=present
   become: true

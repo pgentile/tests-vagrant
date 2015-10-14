@@ -1,3 +1,5 @@
+# {{ ansible_managed }}
+
 [Service]
 ExecStart=
 ExecStart=/usr/bin/docker daemon --dns={{ ansible_eth1.ipv4.address }} --mtu={{ docker_mtu }} --fixed-cidr={{ docker_fixed_cidr }} -H fd://
