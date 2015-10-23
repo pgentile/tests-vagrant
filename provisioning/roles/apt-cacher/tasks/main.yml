@@ -1,0 +1,5 @@
+---
+
+- name: Installer APT-Cacher
+  apt: name=apt-cacher-ng state=present
+  become: true

@@ -4,5 +4,6 @@
     - consul-master
   roles:
     - common
+    - apt-cacher
     - collectd
     - consul-master

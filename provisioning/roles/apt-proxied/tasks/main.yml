@@ -1,0 +1,5 @@
+---
+
+- name: Configurer APT pour taper sur le proxy
+  template: src=apt-proxy.j2 dest=/etc/apt/apt.conf.d/99proxy
+  become: true

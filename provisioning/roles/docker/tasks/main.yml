@@ -13,8 +13,14 @@
   apt_key: keyserver=p80.pool.sks-keyservers.net id=58118E89F3A912897C070ADBF76221572C52609D
   become: true
 
-- name: Ajout repository APT Docker
-  apt_repository: repo='deb https://apt.dockerproject.org/repo debian-jessie main' state=present
+- name: Suppression repository APT Docker (HTTPS)
+  apt_repository: repo='deb https://apt.dockerproject.org/repo debian-jessie main' state=absent
+  become: true
+  tags:
+    - fix
+
+- name: Ajout repository APT Docker (HTTP)
+  apt_repository: repo='deb http://apt.dockerproject.org/repo debian-jessie main' state=present
   become: true
 
 - name: Desinstaller docker.io

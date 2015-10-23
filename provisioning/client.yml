@@ -3,6 +3,8 @@
   tags:
     - client
   roles:
+    - role: apt-proxied
+      apt_cacher_host: "{{ hostvars['consul-master'].ansible_eth1.ipv4.address }}"
     - common
     - collectd
     - consul-client

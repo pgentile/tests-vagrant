@@ -1,0 +1,6 @@
+// {{ ansible_managed }}
+
+Acquire::http {
+    // Target apt-cacher-ng
+    Proxy "http://{{ apt_cacher_host }}:{{ apt_cacher_port }}";
+};
