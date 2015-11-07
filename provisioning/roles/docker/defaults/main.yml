@@ -1,4 +1,5 @@
 ---
 docker_package_state: present
+docker_bind_host: 0.0.0.0
 docker_port: 2375
 docker_swarm_master: false

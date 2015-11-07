@@ -31,12 +31,10 @@ def write_variables(all_vars):
 def add_var(var_name, var_value):
     all_vars = read_variables()
 
-    new_vars = copy.copy(all_vars)
-    new_vars[var_name] = var_value
-
-    if new_vars == all_vars:
+    if all_vars.get(var_name) == var_value:
         return False
 
+    all_vars[var_name] = var_value
     write_variables(all_vars)
 
     return True

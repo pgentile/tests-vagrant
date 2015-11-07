@@ -4,7 +4,7 @@
 ExecStart=
 ExecStart=/usr/bin/docker daemon \
   --dns {{ ansible_eth1.ipv4.address }} \
-  -H fd:// -H tcp://{{ ansible_eth1.ipv4.address }}:{{ docker_port }} \
+  -H fd:// -H tcp://{{ docker_bind_host }}:{{ docker_port }} \
   --cluster-advertise {{ ansible_eth1.ipv4.address }}:{{ docker_port }} \
   --cluster-store consul://{{ ansible_eth1.ipv4.address }}:{{ consul_http_port }}
 Requires=consul.service
