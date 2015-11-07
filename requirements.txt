@@ -1,2 +1,4 @@
 ansible
 netaddr
+
+ansible-lint

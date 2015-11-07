@@ -2,4 +2,10 @@
 
 [Service]
 ExecStart=
-ExecStart=/usr/bin/docker daemon --dns={{ ansible_eth1.ipv4.address }} --mtu={{ docker_mtu }} --fixed-cidr={{ docker_fixed_cidr }} -H fd://
+ExecStart=/usr/bin/docker daemon \
+  --dns {{ ansible_eth1.ipv4.address }} \
+  --mtu {{ docker_mtu }} \
+  -H fd:// -H tcp://{{ ansible_eth1.ipv4.address }}:2375 \
+  --cluster-advertise {{ ansible_eth1.ipv4.address }}:2375 \
+  --cluster-store consul://{{ ansible_eth1.ipv4.address }}:{{ consul_http_port }}
+Requires=consul.service

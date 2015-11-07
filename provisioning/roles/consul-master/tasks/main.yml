@@ -1,5 +1,5 @@
 ---
 
 - name: Configuration serveur Consul
-  copy: src=server.json dest=/etc/consul/server.json
+  copy: src=server.json dest=/etc/consul.d/server.json
   become: true

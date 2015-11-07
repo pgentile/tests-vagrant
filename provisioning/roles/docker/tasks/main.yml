@@ -37,16 +37,16 @@
     - bridge-utils
   become: true
 
-- name: Create bridge
-  script: create-bridge.sh docker0 br0 {{docker_interface_address}} {{docker_mtu}}
-  become: true
-  notify:
-    - restart docker
+#- name: Create bridge
+#  script: create-bridge.sh docker0 br0 {{docker_interface_address}} {{docker_mtu}}
+#  become: true
+#  notify:
+#    - restart docker
 
-- name: Créer les tunnels GRE vers les autres hosts Docker
-  script: create-gre-tunnel.sh br0 {{ (item, inventory_hostname) | gre_name('gre') }} {{ hostvars[item].ansible_eth1.ipv4.address }}
-  with_items: "{{ groups.client | exclude(inventory_hostname) }}"
-  become: true
+#- name: Créer les tunnels GRE vers les autres hosts Docker
+#  script: create-gre-tunnel.sh br0 {{ (item, inventory_hostname) | gre_name('gre') }} {{ hostvars[item].ansible_eth1.ipv4.address }}
+#  with_items: "{{ groups.client | exclude(inventory_hostname) }}"
+#  become: true
 
 - name: Ajouter le script de contrôle de Docker
   copy: src=consul/check_docker.sh dest=/etc/consul/ mode=0700
@@ -90,6 +90,29 @@
 - name: Install Docker Python API
   pip: name=docker-py state=present
   become: true
+
+- name: Docker swarm
+  docker:
+    name: swarm
+    image: swarm
+    command: join --addr={{ ansible_eth1.ipv4.address }}:2375 consul://{{ ansible_eth1.ipv4.address }}:{{ consul_http_port }}
+    # In Ansible 2.0
+    # log_driver: syslog
+    state: started
+  become: true
+
+- name: Docker swarm master
+  docker:
+    name: swarm-master
+    image: swarm
+    command: manage --addr={{ ansible_eth1.ipv4.address }}:2375 consul://{{ ansible_eth1.ipv4.address }}:{{ consul_http_port }}
+    ports:
+      - "2333:2375"
+    # In Ansible 2.0
+    # log_driver: syslog
+    state: started
+  become: true
+  when: docker_swarm_master == true
 
 - name: Remove Docker UI if present
   docker:

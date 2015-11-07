@@ -7,38 +7,56 @@
   install_consul: state=present
   become: true
 
-- name: Installer le script init.d pour Consul
-  copy: src=init.sh dest=/etc/init.d/consul mode=0755
+- name: Créer les répertoires pour Consul
+  file: name={{ item }} state=directory
+  with_items:
+    - /etc/consul.d
+    - /var/run/consul
+  become: true
+
+- name: "Supprimer l'ancien repertoire de conf"
+  file: name=/etc/consul state=absent
+  become: true
+  tags:
+    - fix
+
+- name: Supprimer le script init.d pour Consul
+  file: name=/etc/init.d/consul state=absent
+  become: true
+  tags:
+    - fix
+
+- name: Configurer les services pour Consul
+  template: src=consul.service.j2 dest=/lib/systemd/system/consul.service
   become: true
   notify:
+    - restart systemd
     - restart consul
 
 - name: Enregister Consul dans les services
   register_service: name=consul state=present
   become: true
-
-- name: Créer le répertoire de config pour Consul
-  file: name=/etc/consul state=directory
-  become: true
-
-- name: Créer le répertoire runtime pour Consul
-  file: name=/var/run/consul state=directory
-  become: true
-
-- name: Configurer le daemon Consul
-  copy: src=daemon.conf dest=/etc/default/consul
-  become: true
   notify:
+    - restart systemd
     - restart consul
 
+- name: "Flusher les handlers éventuellement activés, comme le restart de docker"
+  meta: flush_handlers
+
+- name: Supprimer la config de daemon Consul
+  file: name=/etc/default/consul state=absent
+  become: true
+  tags:
+    - fix
+
 - name: Installer la config de Consul
-  template: src=base_config.json.j2 dest=/etc/consul/000_base_config.json
+  template: src=base_config.json.j2 dest=/etc/consul.d/000_base_config.json
   become: true
   notify:
     - restart consul
 
 - name: Configurer les recusors Consul
-  template: src=recursors.json.j2 dest=/etc/consul/recursors.json
+  template: src=recursors.json.j2 dest=/etc/consul.d/recursors.json
   become: true
   notify:
     - restart consul

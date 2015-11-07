@@ -1,5 +1,9 @@
 ---
 
+- name: restart systemd
+  systemctl_reload_daemon: {}
+  become: true
+
 - name: restart consul
   service: name=consul state=restarted
   become: true

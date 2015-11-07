@@ -1,0 +1,13 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description=Consul Agent
+Documentation=https://consul.io
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/consul agent -config-dir /etc/consul.d
+Environment=GOMAXPROCS=2
+
+[Install]
+WantedBy=multi-user.target

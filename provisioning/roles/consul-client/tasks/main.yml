@@ -1,5 +1,5 @@
 ---
 
-- name: Configuration serveur Consul
-  template: src=client.json.j2 dest=/etc/consul/client.json
+- name: Configuration client Consul
+  template: src=client.json.j2 dest=/etc/consul.d/client.json
   become: true
