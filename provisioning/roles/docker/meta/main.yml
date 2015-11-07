@@ -1,4 +1,5 @@
 ---
-  
+
 dependencies:
   - { role: pip }
+  - { role: consul-client }

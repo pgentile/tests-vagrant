@@ -1,3 +1,2 @@
 ---
-docker_node_id: 0
 docker_swarm_master: true
