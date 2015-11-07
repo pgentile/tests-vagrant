@@ -4,7 +4,7 @@
     "tags": ["docker"],
     "checks": [
       {
-        "script": "/etc/consul/check_docker.sh",
+        "script": "/etc/consul.d/check_docker.sh",
         "interval": "1m"
       }
     ]

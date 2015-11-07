@@ -1,9 +1,9 @@
 ---
-- hosts: consul-master
+- hosts: docker
   tags:
-    - consul-master
+    - docker
   roles:
     - common
-    - apt-cacher
     - collectd
     - consul-master
+    - docker

@@ -1,0 +1,6 @@
+{
+  "server": true,
+  "bootstrap_expect": {{ hostvars | hostvars_for_group(groups['docker']) | count }},
+  "retry_join": {{ hostvars | hostvars_for_group(groups['docker']) | map(attribute='ansible_eth1.ipv4.address') | exclude(ansible_eth1.ipv4.address) | to_nice_json }},
+  "retry_interval": "10s"
+}

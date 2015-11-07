@@ -2,5 +2,4 @@
 - hosts: all
   gather_facts: true
 
-- include: consul-master.yml
-- include: client.yml
+- include: docker.yml

@@ -8,19 +8,29 @@
   apt_key: keyserver=p80.pool.sks-keyservers.net id=58118E89F3A912897C070ADBF76221572C52609D
   become: true
 
+- name: Ajouter le repo Debian pour Docker
+  apt_repository: repo='deb https://apt.dockerproject.org/repo debian-jessie main' state=present
+  become: true
+
 - name: Installer Docker
   apt: name=docker-engine state={{docker_package_state}}
   become: true
 
 - name: Ajouter le script de contrôle de Docker
-  copy: src=consul/check_docker.sh dest=/etc/consul/ mode=0700
+  copy: src=consul/check_docker.sh dest=/etc/consul.d/ mode=0700
   become: true
 
 - name: Ajouter la config du service Consul pour Docker
-  copy: src=consul/service_docker.json dest=/etc/consul/
+  copy: src=consul/service_docker.json dest=/etc/consul.d/
   become: true
   notify:
     - reload consul config
+
+- name: Nettoyage vieille conf Docker et Consul
+  file: dest=/etc/consul/ state=absent
+  become: true
+  tags:
+    - fix
 
 - name: Créer le répertoire de config systemd pour Docker
   file: name=/etc/systemd/system/docker.service.d state=directory

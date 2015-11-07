@@ -14,21 +14,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Debian Jessie
   config.vm.box = "debian/jessie64"
 
-  # Master consul
+  # Machines docker
 
-  config.vm.define "consul-master" do |machine|
-    machine.vm.hostname = "consulmaster"
-    machine.vm.network "private_network", ip: "172.28.0.2", netmask: "255.255.255.0"
-  end
+  nodes = 1..3
 
-  # Clients consul
-
-  clients = 1..2
-
-  clients.each do |num|
-    config.vm.define "client#{num}" do |machine|
-      ip_end = 2 + num
-      machine.vm.hostname = "client#{num}"
+  nodes.each do |num|
+    config.vm.define "docker#{num}" do |machine|
+      ip_end = 1 + num
+      machine.vm.hostname = "docker#{num}"
       machine.vm.network "private_network", ip: "172.28.0.#{ip_end}", netmask: "255.255.255.0"
     end
   end
@@ -39,8 +32,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       ansible.playbook = "masterize/playbook.yml"
 
       ansible.groups = {
-        "consul-master" => ["consul-master"],
-        "client" => clients.map { |num| "client#{num}" }
+        "docker" => nodes.map { |num| "docker#{num}" }
       }
   end
 
