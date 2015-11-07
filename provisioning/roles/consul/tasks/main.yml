@@ -14,18 +14,6 @@
     - /var/run/consul
   become: true
 
-- name: "Supprimer l'ancien repertoire de conf"
-  file: name=/etc/consul state=absent
-  become: true
-  tags:
-    - fix
-
-- name: Supprimer le script init.d pour Consul
-  file: name=/etc/init.d/consul state=absent
-  become: true
-  tags:
-    - fix
-
 - name: Configurer les services pour Consul
   template: src=consul.service.j2 dest=/lib/systemd/system/consul.service
   become: true
@@ -42,12 +30,6 @@
 
 - name: "Flusher les handlers éventuellement activés, comme le restart de docker"
   meta: flush_handlers
-
-- name: Supprimer la config de daemon Consul
-  file: name=/etc/default/consul state=absent
-  become: true
-  tags:
-    - fix
 
 - name: Installer la config de Consul
   template: src=base_config.json.j2 dest=/etc/consul.d/000_base_config.json
@@ -81,15 +63,3 @@
 - name: "S'assurer que Consul est lancé"
   service: name=consul state=started
   become: true
-
-- name: Supprimer le fichier /etc/profile.d/recursors.json mal placé
-  file: name=/etc/profile.d/recursors.json state=absent
-  become: true
-  tags:
-    - fix
-
-- name: Supprimer le fichier profile pour Consul
-  file: name=/etc/profile.d/consul-client.sh state=absent
-  become: true
-  tags:
-      - fix

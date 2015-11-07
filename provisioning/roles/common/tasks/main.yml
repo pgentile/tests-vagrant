@@ -15,11 +15,3 @@
     - logwatch
     - ufw
   become: true
-
-- name: Supprimer les paquets non nécessaires
-  apt: name={{ item }} state=absent
-  with_items:
-    - bridge-utils
-  become: true
-  tags:
-    - fix

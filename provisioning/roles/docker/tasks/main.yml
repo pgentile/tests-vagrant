@@ -8,45 +8,9 @@
   apt_key: keyserver=p80.pool.sks-keyservers.net id=58118E89F3A912897C070ADBF76221572C52609D
   become: true
 
-- name: Suppression repository APT Docker (HTTPS)
-  apt_repository: repo='deb https://apt.dockerproject.org/repo debian-jessie main' state=absent
-  become: true
-  tags:
-    - fix
-
-- name: Ajout repository APT Docker (HTTP)
-  apt_repository: repo='deb http://apt.dockerproject.org/repo debian-jessie main' state=present
-  become: true
-
-- name: Desinstaller docker.io
-  apt: name=docker.io state=absent
-  become: true
-  tags:
-    - fix
-
 - name: Installer Docker
   apt: name=docker-engine state={{docker_package_state}}
   become: true
-
-- name: Desinstaller les packages inutiles
-  apt: name={{ item }} state={{docker_package_state}}
-  with_items:
-    - openvswitch-switch
-    - bridge-utils
-  become: true
-  tags:
-    - fix
-
-#- name: Create bridge
-#  script: create-bridge.sh docker0 br0 {{docker_interface_address}} {{docker_mtu}}
-#  become: true
-#  notify:
-#    - restart docker
-
-#- name: Créer les tunnels GRE vers les autres hosts Docker
-#  script: create-gre-tunnel.sh br0 {{ (item, inventory_hostname) | gre_name('gre') }} {{ hostvars[item].ansible_eth1.ipv4.address }}
-#  with_items: "{{ groups.client | exclude(inventory_hostname) }}"
-#  become: true
 
 - name: Ajouter le script de contrôle de Docker
   copy: src=consul/check_docker.sh dest=/etc/consul/ mode=0700
@@ -68,17 +32,6 @@
   notify:
     - restart systemd
     - restart docker
-
-- name: "Supprimer l'ancien fichier de conf du daemon Docker, non utilisé"
-  file: name={{ item }} state=absent
-  become: true
-  with_items:
-    - /etc/systemd/system/docker.service
-    - /etc/default/docker
-  notify:
-    - restart docker
-  tags:
-    - fix
 
 - name: "Flusher les handlers éventuellement activés, comme le restart de docker"
   meta: flush_handlers
@@ -113,12 +66,3 @@
     state: started
   become: true
   when: docker_swarm_master == true
-
-- name: Remove Docker UI if present
-  docker:
-    state: absent
-    image: dockerui/dockerui
-    docker_api_version: 1.18
-  become: true
-  tags:
-    - fix
