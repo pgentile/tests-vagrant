@@ -43,21 +43,13 @@
   notify:
     - restart consul
 
-- name: Checking /etc/environment presence
-  stat: path=/etc/environment
-  register: etc_environment_st
-
-- name: Create /etc/environment
-  copy: dest=/etc/environment content=''
-  become: true
-  when: etc_environment_st.stat.exists == false
-
-- name: Config env var CONSUL_RPC_ADDR
-  lineinfile: dest=/etc/environment regexp='^CONSUL_RPC_ADDR=' line="CONSUL_RPC_ADDR={{ consul_rpc_addr }}:{{ consul_rpc_port }}"
-  become: true
-
-- name: Config env var CONSUL_HTTP_ADDR
-  lineinfile: dest=/etc/environment regexp='^CONSUL_HTTP_ADDR=' line="CONSUL_HTTP_ADDR={{ consul_http_addr }}:{{ consul_http_port }}"
+- name: Configuring global env vars
+  global_env_var: name={{ item.name }} value={{ item.value }} state=present
+  with_items:
+      - name: CONSUL_RPC_ADDR
+        value: "{{ consul_rpc_addr }}:{{ consul_rpc_port }}"
+      - name: CONSUL_HTTP_ADDR
+        value: "{{ consul_http_addr }}:{{ consul_http_port }}"
   become: true
 
 - name: "S'assurer que Consul est lancé"
