@@ -28,11 +28,11 @@
     - restart systemd
     - restart consul
 
-- name: "Flusher les handlers éventuellement activés, comme le restart de docker"
+- name: Flush handlers
   meta: flush_handlers
 
 - name: Installer la config de Consul
-  template: src=base_config.json.j2 dest=/etc/consul.d/000_base_config.json
+  template: src=base_config.json.j2 dest=/etc/consul.d/base_config.json
   become: true
   notify:
     - restart consul
@@ -43,6 +43,10 @@
   notify:
     - restart consul
 
+- name: "S'assurer que Consul est lancé"
+  service: name=consul state=started
+  become: true
+
 - name: Configuring global env vars
   global_env_var: name={{ item.name }} value={{ item.value }} state=present
   with_items:
@@ -50,8 +54,4 @@
         value: "{{ consul_rpc_addr }}:{{ consul_rpc_port }}"
       - name: CONSUL_HTTP_ADDR
         value: "{{ consul_http_addr }}:{{ consul_http_port }}"
-  become: true
-
-- name: "S'assurer que Consul est lancé"
-  service: name=consul state=started
   become: true

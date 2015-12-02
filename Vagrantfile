@@ -32,7 +32,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       ansible.playbook = "masterize/playbook.yml"
 
       ansible.groups = {
-        "docker" => nodes.map { |num| "docker#{num}" }
+        "docker" => nodes.map { |num| "docker#{num}" },
+        "consul-servers" => nodes.map { |num| "docker#{num}" },
       }
   end
 

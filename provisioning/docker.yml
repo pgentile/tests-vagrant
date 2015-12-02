@@ -1,9 +1,10 @@
 ---
+
 - hosts: docker
   tags:
     - docker
   roles:
     - common
     - collectd
-    - consul-master
+    - consul
     - docker

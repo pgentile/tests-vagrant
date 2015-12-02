@@ -2,6 +2,7 @@
   "enable_syslog": true,
   "data_dir": "/var/run/consul",
   "ui_dir": "/usr/share/consul/ui/dist",
+  "bind_addr": {{ ansible_eth1.ipv4.address | to_nice_json }},
   "client_addr": {{ ansible_eth1.ipv4.address | to_nice_json }},
   "advertise_addr": {{ ansible_eth1.ipv4.address | to_nice_json }},
   "ports": {
@@ -9,5 +10,10 @@
   },
   "dns_config": {
     "allow_stale": true
-  }
+  },
+  "server": {% if 'consul-servers' in group_names -%} true {%- else -%} false {%- endif %},
+  {% if 'consul-servers' in group_names -%} "bootstrap_expect": {{ hostvars | hostvars_for_group(groups['consul-servers']) | count }}, {%- endif %}
+  "retry_join": {{ hostvars | hostvars_for_group(groups['consul-servers']) | map(attribute='ansible_eth1.ipv4.address') | exclude(ansible_eth1.ipv4.address) | to_nice_json }},
+  "retry_interval": "10s",
+  "rejoin_after_leave": true
 }
