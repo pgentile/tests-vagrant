@@ -1,0 +1,14 @@
+---
+- hosts: all
+  tasks:
+    - name: Update apt-cache
+      apt: update_cache=yes
+      become: true
+
+    - name: Installer unattended-upgrades
+      apt: name=unattended-upgrades state=present
+      become: true
+
+    - name: Mises à jour
+      command: unattended-upgrades
+      become: true
