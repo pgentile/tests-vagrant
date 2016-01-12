@@ -26,12 +26,6 @@
   notify:
     - reload consul config
 
-- name: Nettoyage vieille conf Docker et Consul
-  file: dest=/etc/consul/ state=absent
-  become: true
-  tags:
-    - fix
-
 - name: Créer le répertoire de config systemd pour Docker
   file: name=/etc/systemd/system/docker.service.d state=directory
   become: true
