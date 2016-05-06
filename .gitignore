@@ -2,6 +2,7 @@
 
 /venv/
 /.vagrant/
+/.bundle/
 
 *.pyc
 *.pyo

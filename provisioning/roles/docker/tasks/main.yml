@@ -57,8 +57,7 @@
     name: swarm
     image: swarm
     command: join --addr={{ ansible_eth1.ipv4.address }}:{{ docker_port }} consul://{{ ansible_eth1.ipv4.address }}:{{ consul_http_port }}
-    # In Ansible 2.0
-    # log_driver: syslog
+    log_driver: syslog
     state: started
   become: true
 
@@ -69,8 +68,7 @@
     command: manage --addr={{ ansible_eth1.ipv4.address }}:{{ docker_port }} consul://{{ ansible_eth1.ipv4.address }}:{{ consul_http_port }}
     ports:
       - "2333:2375"
-    # In Ansible 2.0
-    # log_driver: syslog
+    log_driver: syslog
     state: started
   become: true
   when: docker_swarm_master == true
