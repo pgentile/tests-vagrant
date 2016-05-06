@@ -7,7 +7,7 @@ def exclude_from_list(values, *excluded):
 
 
 def hostvars_for_group(hostvars, group):
-    return [v for k, v in hostvars.iteritems() if k in group]
+    return [hostvars[hostname] for hostname in group]
 
 
 def dict_values(d):

@@ -21,6 +21,9 @@
     - restart systemd
     - restart consul
 
+- name: Vérifier la config de Consul
+  command: consul configtest -config-dir /etc/consul.d
+
 - name: Enregister Consul dans les services
   register_service: name=consul state=present
   become: true

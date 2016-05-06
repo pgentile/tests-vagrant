@@ -1,7 +1,7 @@
 {
+  "ui": true,
   "enable_syslog": true,
   "data_dir": "/var/run/consul",
-  "ui_dir": "/usr/share/consul/ui/dist",
   "bind_addr": {{ ansible_eth1.ipv4.address | to_nice_json }},
   "client_addr": {{ ansible_eth1.ipv4.address | to_nice_json }},
   "advertise_addr": {{ ansible_eth1.ipv4.address | to_nice_json }},

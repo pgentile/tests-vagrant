@@ -12,6 +12,10 @@
   apt_repository: repo='deb https://apt.dockerproject.org/repo debian-jessie main' state=present
   become: true
 
+- name: Ajouter le groupe pour Docker
+  group: name=docker state=present
+  become: true
+
 - name: Installer Docker
   apt: name=docker-engine state={{docker_package_state}}
   become: true
